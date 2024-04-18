@@ -11,11 +11,33 @@ app.use(bodyParser.json());
 var CONNECTION_STRING = "mongodb+srv://shuklakhushim2:Khushis_235@cluster0.tnbn4po.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 var DATABASENAME = "Travelapp";
 var database;
+
+// app.get('/api/data', async (req, res) => {
+//     try {
+//       // Fetch data from MongoDB
+//       const data = await Destinations.find(); // MyModel is your Mongoose model
+//       res.json(data);
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ message: 'Server Error' });
+//     }
+//   });
+  
+//   const PORT = process.env.PORT || 5500;
+//   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
 app.listen(5500, () => {
     MongoClient.connect(CONNECTION_STRING, (error, client) => {
         database = client.db(DATABASENAME);
         console.log("Connected");
     })
+})
+app.get('/api/data', (request, response) => {
+    debugger
+    database.collection("Destinations").find({}).toArray((error, result) => {
+        response.send(result);
+    });
 })
 app.get('/backend/travel/GetUser', (request, response) => {
     database.collection("User").find({}).toArray((error, result) => {
