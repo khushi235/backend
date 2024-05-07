@@ -34,7 +34,6 @@ app.listen(5500, () => {
     })
 })
 app.get('/api/data', (request, response) => {
-    debugger
     database.collection("Destinations").find({}).toArray((error, result) => {
         response.send(result);
     });
