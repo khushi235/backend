@@ -12,21 +12,6 @@ var CONNECTION_STRING = "mongodb+srv://shuklakhushim2:Khushis_235@cluster0.tnbn4
 var DATABASENAME = "Travelapp";
 var database;
 
-// app.get('/api/data', async (req, res) => {
-//     try {
-//       // Fetch data from MongoDB
-//       const data = await Destinations.find(); // MyModel is your Mongoose model
-//       res.json(data);
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).json({ message: 'Server Error' });
-//     }
-//   });
-  
-//   const PORT = process.env.PORT || 5500;
-//   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-
 app.listen(5500, () => {
     MongoClient.connect(CONNECTION_STRING, (error, client) => {
         database = client.db(DATABASENAME);
@@ -66,43 +51,37 @@ app.post('/backend/travel/Login', (request, response) => {
 
         if (user) {
             // User found, send success response
-            response.status(200).send('User authenticated successfully');
+            const responseData = JSON.stringify({ userId: user._id });
+            
+            response.send(responseData);
+            // response.status(200).send('User authenticated successfully');
         } else {
             // User not found, send failure response
             response.status(401).send('User not found or incorrect credentials');
         }
     });
 });
+// app.post('/api/saved', async (req, res) => {
+//     const { userId, destinationId } = req.body;
+//     const savedCollection = database.collection('saved');
+//     try {
+//       const result = await savedCollection.insertOne({ userId, destinationId });
+//       res.status(201).json(result.ops[0]);
+//     } catch (err) {
+//       console.error('Error adding favorite:', err);
+//       res.status(500).json({ error: 'Internal server error' });
+//     }
+//   });
 
+//   app.get('/api/saved/:userId', async (req, res) => {
+//     const userId = req.params.userId;
+//     const savedCollection = database.collection('saved');
+//     try {
+//       const saved = await savedCollection.find({ userId }).toArray();
+//       res.json(saved);
+//     } catch (err) {
+//       console.error('Error fetching saved:', err);
+//       res.status(500).json({ error: 'Internal server error' });
+//     }
+//   });
 
-
-
-
-/*var express=require("express");
-var MongoClient=require("mongodb").MongoClient;
-var cors=require("cors");
-const multer=require("multer");
-const { error } = require("console");
-const { request } = require("http");
-
-var app=express();
-app.use(cors());
-var CONNECTION_STRING="mongodb+srv://shuklakhushim2:Khushis_235@cluster0.tnbn4po.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-var DATABASENAME="Travelapp";
-var database;
-app.listen(5500,()=>{
-    MongoClient.connect(CONNECTION_STRING,(error,client)=>{
-        database=client.db(DATABASENAME);
-        console.log("Connected");
-    })
-})
-app.get('/backend/travel/GetUser',(request,response)=>{
-    database.collection("User").find({}).toArray((error,result)=>{
-        response.send(result);
-    });
-})
-app.post('/backend/travel/Register',(request,response) =>{
-    console.log('receiving data ...');
-    console.log('body is ',request.body);
-    response.send(request.body);
-});*/
