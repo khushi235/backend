@@ -110,6 +110,10 @@ app.post('/api/favorites', async (request, response) => {
     }
   });
 
+
+
+
+
   app.get('/api/favorite_destinations/:userId', async (request, response) => {
     
     const userId = request.params.userId;
