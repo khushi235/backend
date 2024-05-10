@@ -92,7 +92,6 @@ app.post('/api/favorites', async (request, response) => {
       const favoritesCollection = database.collection('favorites');
       const result = await favoritesCollection.insertOne({ userId, destinationId });
       response.status(201).json(result.ops && result.ops.length > 0 ? result.ops[0] : {});
-      alert('Destination saved for later!');
     } catch (err) {
       console.error('Error adding favorite:', err);
       response.status(500).json({ error: 'Internal server error' });
