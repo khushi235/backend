@@ -61,6 +61,69 @@ app.post('/backend/travel/Login', (request, response) => {
         }
     });
 });
+
+app.post('/api/favorites', async (request, response) => {
+
+    const { userId, destinationId } = request.body;
+    try {
+      const favoritesCollection = database.collection('favorites');
+      const result = await favoritesCollection.insertOne({ userId, destinationId });
+      response.status(201).json(result.ops && result.ops.length > 0 ? result.ops[0] : {});
+    } catch (err) {
+      console.error('Error adding favorite:', err);
+      response.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  app.get('/api/favorites/:userId', async (request, response) => {
+    
+    const userId = request.params.userId;
+    try {
+      const favoritesCollection = database.collection('favorites');
+      const favorites = await favoritesCollection.find({ userId: userId }).toArray();
+      response.json(favorites);
+    } catch (err) {
+      console.error('Error fetching favorites:', err);
+      response.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  app.get('/api/favorite_destinations/:userId', async (request, response) => {
+    
+    const userId = request.params.userId;
+    try {
+      const favoritesCollection = database.collection('favorites');
+      const favoritesWithDestinations = await favoritesCollection.aggregate([
+        {
+          $match: { userId: userId } // Filter favorites by userId
+        },
+        {
+          $lookup: {
+            from: 'destinations', // Name of the destinations collection
+            localField: 'destinationId', // Field in the favorites collection
+            foreignField: '_id', // Field in the destinations collection
+            as: 'destination' // Alias for the joined data
+          }
+        },
+        {
+          $unwind: '$destination' // Convert destination array to object
+        },
+        {
+          $project: {
+            _id: 0, // Exclude _id field from favorites
+            userId: 0 // Exclude userId field from favorites
+          }
+        }
+      ]).toArray();
+    // const favorites = await favoritesCollection.find({ userId: userId }).toArray();
+    //   response.json(favorites);
+      
+      response.json(favoritesWithDestinations);
+      
+    } catch (err) {
+      console.error('Error fetching favorites:', err);
+      response.status(500).json({ error: 'Internal server error' });
+    }
+  });
 // app.post('/api/saved', async (req, res) => {
 //     const { userId, destinationId } = req.body;
 //     const savedCollection = database.collection('saved');
