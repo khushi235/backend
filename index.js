@@ -23,6 +23,29 @@ app.get('/api/data', (request, response) => {
         response.send(result);
     });
 })
+
+app.get('/api/exploredata', (request, response) => {
+    database.collection("Explore").find({}).toArray((error, result) => {
+        response.send(result);
+    });
+})
+
+const { ObjectId } = require('mongodb'); // Import ObjectId from mongodb package
+
+app.get('/api/data/:id', (request, response) => {
+    const destinationId = request.params.id;
+    database.collection("Destinations").findOne({ _id: ObjectId(destinationId) }, (error, result) => {
+        if (error) {
+            console.error('Error fetching destination by ID:', error);
+            response.status(500).json({ message: 'Internal server error' });
+        } else {
+            response.json(result);
+        }
+    });
+});
+
+
+
 app.get('/backend/travel/GetUser', (request, response) => {
     database.collection("User").find({}).toArray((error, result) => {
         response.send(result);
@@ -136,15 +159,4 @@ app.post('/api/favorites', async (request, response) => {
 //     }
 //   });
 
-//   app.get('/api/saved/:userId', async (req, res) => {
-//     const userId = req.params.userId;
-//     const savedCollection = database.collection('saved');
-//     try {
-//       const saved = await savedCollection.find({ userId }).toArray();
-//       res.json(saved);
-//     } catch (err) {
-//       console.error('Error fetching saved:', err);
-//       res.status(500).json({ error: 'Internal server error' });
-//     }
-//   });
 
